@@ -1,0 +1,45 @@
+{
+  "name": "user-restriction-proxy",
+  "author": "ari-party <git@astrid.email>",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grand-hawk/karina-bot.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . -w",
+    "fix": "npm run lint:fix && npm run format",
+    "build": "tsup",
+    "dev": "dotenv tsx src/server.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/express-serve-static-core": "^4.19.6",
+    "@types/klaw": "^3.0.6",
+    "@types/node": "^22.13.4",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "dotenv-cli": "^8.0.0",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.8.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "prettier": "^3.5.1",
+    "tsup": "^8.3.6",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "^0.11.1",
+    "express": "^4.21.2",
+    "ioredis": "^5.5.0",
+    "klaw": "^4.1.0",
+    "ky": "^1.7.5",
+    "zod": "^3.24.2"
+  }
+}
