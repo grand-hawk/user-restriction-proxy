@@ -14,3 +14,32 @@ This uses Redis caching as a request to Roblox's servers can take 200ms+.
 | `REDIS_EXPIRY`         | Time in seconds for the Redis cache expiry.                              | `3600`                   | No       |
 | `UNIVERSE_IDS`         | A comma-separated list of universe IDs, parsed into an array of numbers. | `""` (empty array)       | No       |
 | `API_KEY`              | Your API key required for authenticating requests.                       | N/A                      | Yes      |
+
+## Sample request
+
+GET `/user-restrictions/:userId`
+
+```ts
+// https://create.roblox.com/docs/en-us/cloud/reference/UserRestriction#Get-User-Restriction
+type Response = Record<string, UserRestriction['gameJoinRestriction']>;
+```
+
+```json
+{
+  "<universe-id>": {
+    "active": false,
+    "privateReason": "",
+    "displayReason": "",
+    "excludeAltAccounts": false,
+    "inherited": false
+  },
+  "<universe-id>": {
+    "active": true,
+    "startTime": "2025-02-18T21:23:45+00:00",
+    "privateReason": "Private reason",
+    "displayReason": "Display reason",
+    "excludeAltAccounts": false,
+    "inherited": false
+  }
+}
+```
