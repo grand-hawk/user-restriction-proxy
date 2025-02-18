@@ -12,8 +12,5 @@ npm-debug.log*
 # env
 .env*
 
-# package managers
-pnpm-lock.yaml
-
 # output files
 dist
