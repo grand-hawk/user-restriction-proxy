@@ -6,5 +6,4 @@ export default defineConfig({
   sourcemap: false,
   format: 'esm',
   treeshake: true,
-  noExternal: [/.*/],
 });
