@@ -8,6 +8,13 @@ import { redis } from '../../services/redis';
 
 import type { UserRestriction } from '../../lib/cloud/getUserRestriction';
 
+type UserRestrictions = Record<string, UserRestriction['gameJoinRestriction']>;
+
+const valueSchema = z.object({
+  partial: z.boolean(),
+  userRestrictions: z.unknown(),
+});
+
 const router = Router();
 
 const paramsSchema = z.object({
@@ -16,8 +23,6 @@ const paramsSchema = z.object({
     .transform((v) => Number(v))
     .pipe(z.number()),
 });
-
-type UserRestrictions = Record<string, UserRestriction['gameJoinRestriction']>;
 
 router.get('/user-restrictions/:userId', authorization, async (req, res) => {
   const parsedParams = paramsSchema.safeParse(req.params);
@@ -31,7 +36,12 @@ router.get('/user-restrictions/:userId', authorization, async (req, res) => {
 
   const cacheKey = `user-restrictions:${userId}`;
   const existing = await redis.get(cacheKey);
-  if (existing) return res.json(JSON.parse(existing));
+
+  if (existing) {
+    const parsed = JSON.parse(existing);
+    if (valueSchema.safeParse(parsed).success && !parsed.partial)
+      return res.json(parsed.userRestrictions);
+  }
 
   try {
     const promises = env.UNIVERSE_IDS.map(async (universeId) => {
@@ -62,7 +72,13 @@ router.get('/user-restrictions/:userId', authorization, async (req, res) => {
       return acc;
     }, {});
 
-    await redis.set(cacheKey, JSON.stringify(restrictions));
+    await redis.set(
+      cacheKey,
+      JSON.stringify({
+        partial: promises.length !== results.length,
+        userRestrictions: restrictions,
+      } satisfies z.infer<typeof valueSchema>),
+    );
     await redis.expire(cacheKey, env.REDIS_EXPIRY);
 
     res.json(restrictions);
