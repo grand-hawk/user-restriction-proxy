@@ -51,6 +51,8 @@ router.get('/user-restrictions/:userId', authorization, async (req, res) => {
 
     res.json(restrictions);
   } catch (error) {
+    console.warn(error);
+
     res.status(500).json({ error: 'Failed to fetch user restrictions' });
   }
 });
