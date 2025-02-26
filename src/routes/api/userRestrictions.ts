@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { TimeoutError } from 'ky';
 import { z } from 'zod';
 
 import { env } from '../../env';
@@ -8,10 +9,9 @@ import { redis } from '../../services/redis';
 
 import type { UserRestriction } from '../../lib/cloud/getUserRestriction';
 
-type UserRestrictions = Record<string, UserRestriction['gameJoinRestriction']>;
+type UserRestrictions = Record<string, UserRestriction['gameJoinRestriction'] | null>;
 
 const valueSchema = z.object({
-  partial: z.boolean(),
   userRestrictions: z.unknown(),
 });
 
@@ -39,33 +39,37 @@ router.get('/user-restrictions/:userId', authorization, async (req, res) => {
 
   if (existing) {
     const parsed = JSON.parse(existing);
-    if (valueSchema.safeParse(parsed).success && !parsed.partial)
-      return res.json(parsed.userRestrictions);
+    if (valueSchema.safeParse(parsed).success && !parsed.partial) return res.json(parsed.userRestrictions);
   }
 
   try {
     const promises = env.UNIVERSE_IDS.map(async (universeId) => {
-      const restriction = await getUserRestriction(universeId, userId);
-      if (!restriction) return null;
+      let restriction: UserRestrictions[string] = null;
+
+      const startTime = Date.now();
+      const tryRequest = async () => {
+        try {
+          const result = await getUserRestriction(universeId, userId);
+          restriction = result ? result.gameJoinRestriction : null;
+        } catch (error) {
+          const elapsedTime = (Date.now() - startTime) / 1_000;
+          if (error instanceof TimeoutError && elapsedTime < env.TIMEOUT_BACKOFF) {
+            return tryRequest();
+          }
+        }
+      };
+
+      await tryRequest();
 
       return {
-        [universeId]: restriction.gameJoinRestriction,
+        [universeId]: restriction,
       };
     });
 
     const settled = await Promise.allSettled(promises);
-    const results: UserRestrictions[] = [];
-    for (const result of settled) {
-      // eslint-disable-next-line default-case
-      switch (result.status) {
-        case 'fulfilled':
-          if (result.value) results.push(result.value);
-          break;
-        case 'rejected':
-          console.warn(`User restriction fetch failed: ${result.reason}`);
-          break;
-      }
-    }
+    const results: UserRestrictions[] = settled
+      .filter((result) => result.status === 'fulfilled')
+      .map((result) => result.value);
 
     const restrictions = results.reduce((acc, result) => {
       if (result) return { ...acc, ...result };
@@ -75,7 +79,6 @@ router.get('/user-restrictions/:userId', authorization, async (req, res) => {
     await redis.set(
       cacheKey,
       JSON.stringify({
-        partial: promises.length !== results.length,
         userRestrictions: restrictions,
       } satisfies z.infer<typeof valueSchema>),
     );

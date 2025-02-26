@@ -24,6 +24,7 @@ export const env = createEnv({
       .transform((v) => v.map((v2) => Number(v2)))
       .pipe(z.number().array()),
     API_KEY: z.string(),
+    TIMEOUT_BACKOFF: z.number().default(30),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

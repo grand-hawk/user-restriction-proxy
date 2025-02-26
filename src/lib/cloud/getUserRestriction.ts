@@ -17,10 +17,7 @@ export interface UserRestriction {
   };
 }
 
-export default async function getUserRestriction(
-  universeId: number,
-  userId: number,
-) {
+export default async function getUserRestriction(universeId: number, userId: number) {
   const response = await ky.get(
     `https://apis.roblox.com/cloud/v2/universes/${universeId}/user-restrictions/${userId}`,
     {

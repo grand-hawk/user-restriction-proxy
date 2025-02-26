@@ -8,8 +8,7 @@ import importPath from './utils/importPath';
 
 const app = express();
 
-const routesDirectory =
-  process.env.NODE_ENV === 'production' ? 'routes' : 'src/routes';
+const routesDirectory = process.env.NODE_ENV === 'production' ? 'routes' : 'src/routes';
 for await (const file of klaw(routesDirectory)) {
   file.path = file.path.replaceAll('\\', '/');
 
@@ -23,6 +22,4 @@ for await (const file of klaw(routesDirectory)) {
   app.use(parent, router.default);
 }
 
-app.listen(env.PORT, env.HOSTNAME, () =>
-  console.log(`Listening on ${env.HOSTNAME}:${env.PORT}`),
-);
+app.listen(env.PORT, env.HOSTNAME, () => console.log(`Listening on ${env.HOSTNAME}:${env.PORT}`));
