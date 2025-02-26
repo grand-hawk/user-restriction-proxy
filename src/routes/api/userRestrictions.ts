@@ -6,6 +6,8 @@ import getUserRestriction from '../../lib/cloud/getUserRestriction';
 import authorization from '../../middleware/authorization';
 import { redis } from '../../services/redis';
 
+import type { UserRestriction } from '../../lib/cloud/getUserRestriction';
+
 const router = Router();
 
 const paramsSchema = z.object({
@@ -14,6 +16,8 @@ const paramsSchema = z.object({
     .transform((v) => Number(v))
     .pipe(z.number()),
 });
+
+type UserRestrictions = Record<string, UserRestriction['gameJoinRestriction']>;
 
 router.get('/user-restrictions/:userId', authorization, async (req, res) => {
   const parsedParams = paramsSchema.safeParse(req.params);
@@ -39,7 +43,19 @@ router.get('/user-restrictions/:userId', authorization, async (req, res) => {
       };
     });
 
-    const results = await Promise.all(promises);
+    const settled = await Promise.allSettled(promises);
+    const results: UserRestrictions[] = [];
+    for (const result of settled) {
+      // eslint-disable-next-line default-case
+      switch (result.status) {
+        case 'fulfilled':
+          if (result.value) results.push(result.value);
+          break;
+        case 'rejected':
+          console.warn(`User restriction fetch failed: ${result.reason}`);
+          break;
+      }
+    }
 
     const restrictions = results.reduce((acc, result) => {
       if (result) return { ...acc, ...result };
@@ -51,7 +67,7 @@ router.get('/user-restrictions/:userId', authorization, async (req, res) => {
 
     res.json(restrictions);
   } catch (error) {
-    console.warn(error);
+    console.warn(`Error fetching user restrictions: ${error}`);
 
     res.status(500).json({ error: 'Failed to fetch user restrictions' });
   }

@@ -26,7 +26,7 @@ export default async function getUserRestriction(
     {
       headers: { 'x-api-key': `${env.API_KEY}` },
       throwHttpErrors: false,
-      retry: 3,
+      retry: 5,
     },
   );
 
