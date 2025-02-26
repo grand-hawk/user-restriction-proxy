@@ -39,7 +39,7 @@ router.get('/user-restrictions/:userId', authorization, async (req, res) => {
 
   if (existing) {
     const parsed = JSON.parse(existing);
-    if (valueSchema.safeParse(parsed).success && !parsed.partial) return res.json(parsed.userRestrictions);
+    if (valueSchema.safeParse(parsed).success) return res.json(parsed.userRestrictions);
   }
 
   try {
