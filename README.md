@@ -14,6 +14,7 @@ This uses Redis caching as a request to Roblox's servers can take 200ms+.
 | `REDIS_EXPIRY`         | Time in seconds for the Redis cache expiry.                              | `3600`                   | No       |
 | `UNIVERSE_IDS`         | A comma-separated list of universe IDs, parsed into an array of numbers. | `""` (empty array)       | No       |
 | `API_KEY`              | Your API key required for authenticating requests.                       | N/A                      | Yes      |
+| `TIMEOUT_BACKOFF`        | Maximum time in seconds to retry requests after a timeout error.         | `30`                     | No       |
 
 ## Sample request
 
