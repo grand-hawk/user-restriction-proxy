@@ -20,7 +20,7 @@ export const env = createEnv({
     UNIVERSE_IDS: z
       .string()
       .default('')
-      .transform((v) => (v ? v.split(',') : []))
+      .transform((v) => v.split(','))
       .transform((v) => v.map((v2) => Number(v2)))
       .pipe(z.number().array()),
     API_KEY: z.string(),
