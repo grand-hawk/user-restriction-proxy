@@ -8,14 +8,16 @@ export const env = createEnv({
     PORT: z
       .string()
       .default('3000')
-      .transform((v) => parseInt(v, 10)),
+      .transform((v) => parseInt(v, 10))
+      .pipe(z.number()),
     AUTHORIZATION_HEADER: z.string().optional(),
 
     REDIS: z.string().url().default('redis://localhost:6379'),
     REDIS_EXPIRY: z
       .string()
       .default('3600')
-      .transform((v) => parseInt(v, 10)),
+      .transform((v) => parseInt(v, 10))
+      .pipe(z.number()),
 
     UNIVERSE_IDS: z
       .string()
@@ -24,7 +26,10 @@ export const env = createEnv({
       .transform((v) => v.map((v2) => Number(v2)))
       .pipe(z.number().array()),
     API_KEY: z.string(),
-    TIMEOUT_BACKOFF: z.number().default(30),
+    TIMEOUT_BACKOFF: z
+      .string()
+      .transform((v) => parseInt(v, 10))
+      .pipe(z.number()),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
