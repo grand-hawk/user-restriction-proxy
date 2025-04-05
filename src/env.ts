@@ -1,9 +1,12 @@
 import { createEnv } from '@t3-oss/env-core';
 import { z } from 'zod';
 
-// eslint-disable-next-line import/prefer-default-export
 export const env = createEnv({
   server: {
+    NODE_ENV: z
+      .enum(['development', 'test', 'staging', 'production'])
+      .default('production'),
+
     HOSTNAME: z.string().default('0.0.0.0'),
     PORT: z
       .string()
@@ -28,6 +31,7 @@ export const env = createEnv({
     API_KEY: z.string(),
     TIMEOUT_BACKOFF: z
       .string()
+      .default('30')
       .transform((v) => parseInt(v, 10))
       .pipe(z.number()),
   },
