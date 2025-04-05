@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { env } from '@/env';
 import { log } from '@/pino';
-import { client, environment } from '@/services/infisical';
+import { client as Infisical, environment } from '@/services/infisical';
 
 import type { NextFunction, Request, Response } from 'express';
 
@@ -11,15 +11,12 @@ let { AUTHORIZATION } = env;
 if (
   !AUTHORIZATION &&
   env.INFISICAL_WORKSPACE_ID &&
-  env.INFISICAL_SERVICE_TOKEN &&
   env.AUTHORIZATION_INFISICAL_SECRET_PATH
 ) {
   if (!environment)
     throw new Error('Could not determine Infisical environment');
 
-  client.auth().accessToken(env.INFISICAL_SERVICE_TOKEN);
-
-  const secret = await client.secrets().getSecret({
+  const secret = await Infisical.secrets().getSecret({
     environment,
     projectId: env.INFISICAL_WORKSPACE_ID,
     secretPath: path.dirname(env.AUTHORIZATION_INFISICAL_SECRET_PATH),
@@ -31,7 +28,7 @@ if (
       ...secret,
       secretValue: 'hidden',
     },
-    'Fetched Infisical secret',
+    'Fetched Infisical authorization secret',
   );
 
   AUTHORIZATION = secret.secretValue;
