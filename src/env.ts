@@ -21,7 +21,7 @@ export const env = createEnv({
     AUTHORIZATION_INFISICAL_SECRET_PATH: z.string().optional(),
     AUTHORIZATION: z.string().optional(),
 
-    API_KEY: z.string(),
+    API_KEY: z.string().optional(),
     API_KEY_INFISICAL_SECRET_PATH: z.string().optional(),
 
     REDIS: z.string().url().default('redis://localhost:6379'),
