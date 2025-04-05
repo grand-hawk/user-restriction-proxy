@@ -13,7 +13,16 @@ export const env = createEnv({
       .default('3000')
       .transform((v) => parseInt(v, 10))
       .pipe(z.number()),
-    AUTHORIZATION_HEADER: z.string().optional(),
+
+    INFISICAL_WORKSPACE_ID: z.string().optional(),
+    INFISICAL_SERVICE_TOKEN: z.string().optional(),
+    INFISICAL_ENVIRONMENT: z.string().optional(),
+
+    AUTHORIZATION_INFISICAL_SECRET_PATH: z.string().optional(),
+    AUTHORIZATION: z.string().optional(),
+
+    API_KEY: z.string(),
+    API_KEY_INFISICAL_SECRET_PATH: z.string().optional(),
 
     REDIS: z.string().url().default('redis://localhost:6379'),
     REDIS_EXPIRY: z
@@ -28,7 +37,6 @@ export const env = createEnv({
       .transform((v) => v.split(','))
       .transform((v) => v.map((v2) => Number(v2)))
       .pipe(z.number().array()),
-    API_KEY: z.string(),
     TIMEOUT_BACKOFF: z
       .string()
       .default('30')

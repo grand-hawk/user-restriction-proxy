@@ -1,6 +1,6 @@
 import ky from 'ky';
 
-import { env } from '../../env';
+import { env } from '@/env';
 
 export interface UserRestriction {
   path: string;
@@ -17,7 +17,7 @@ export interface UserRestriction {
   };
 }
 
-export default async function getUserRestriction(universeId: number, userId: number) {
+export async function getUserRestriction(universeId: number, userId: number) {
   const response = await ky.get(
     `https://apis.roblox.com/cloud/v2/universes/${universeId}/user-restrictions/${userId}`,
     {
