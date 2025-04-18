@@ -28,7 +28,7 @@ if (
       ...secret,
       secretValue: 'hidden',
     },
-    'Fetched Infisical api key secret',
+    'Fetched Infisical Roblox api key secret',
   );
 
   API_KEY = secret.secretValue;
@@ -54,7 +54,9 @@ export async function getUserRestriction(universeId: number, userId: number) {
     .get(
       `https://apis.roblox.com/cloud/v2/universes/${universeId}/user-restrictions/${userId}`,
       {
-        headers: { 'x-api-key': `${env.API_KEY}` },
+        headers: {
+          'x-api-key': `${env.API_KEY}`,
+        },
         retry: 5,
       },
     )
