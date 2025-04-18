@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { TimeoutError } from 'ky';
 import { z } from 'zod';
 
 import { env } from '@/env';
@@ -54,28 +53,15 @@ router.get(
       const promises = env.UNIVERSE_IDS.map(async (universeId) => {
         let restriction: UserRestrictions[string] = null;
 
-        const startTime = Date.now();
-        const tryRequest = async () => {
-          try {
-            const result = await getUserRestriction(universeId, userId);
-            restriction = result ? result.gameJoinRestriction : null;
-          } catch (err) {
-            log.warn(
-              err,
-              `Error fetching user restrictions for ${universeId}/${userId}`,
-            );
-
-            const elapsedTime = (Date.now() - startTime) / 1_000;
-            if (
-              err instanceof TimeoutError &&
-              elapsedTime < env.TIMEOUT_BACKOFF
-            ) {
-              return tryRequest();
-            }
-          }
-        };
-
-        await tryRequest();
+        try {
+          const result = await getUserRestriction(universeId, userId);
+          restriction = result ? result.gameJoinRestriction : null;
+        } catch (err) {
+          log.warn(
+            err,
+            `Error fetching user restrictions for ${universeId}/${userId}`,
+          );
+        }
 
         return {
           [universeId]: restriction,

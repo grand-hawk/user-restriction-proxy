@@ -50,16 +50,13 @@ export interface UserRestriction {
 }
 
 export async function getUserRestriction(universeId: number, userId: number) {
-  const response = await ky.get(
-    `https://apis.roblox.com/cloud/v2/universes/${universeId}/user-restrictions/${userId}`,
-    {
-      headers: { 'x-api-key': `${env.API_KEY}` },
-      throwHttpErrors: false,
-      retry: 5,
-    },
-  );
-
-  if (!response.ok) return null;
-
-  return response.json<UserRestriction>();
+  return ky
+    .get(
+      `https://apis.roblox.com/cloud/v2/universes/${universeId}/user-restrictions/${userId}`,
+      {
+        headers: { 'x-api-key': `${env.API_KEY}` },
+        retry: 5,
+      },
+    )
+    .json<UserRestriction>();
 }
