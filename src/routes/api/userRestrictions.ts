@@ -60,6 +60,11 @@ router.get(
             const result = await getUserRestriction(universeId, userId);
             restriction = result ? result.gameJoinRestriction : null;
           } catch (err) {
+            log.warn(
+              err,
+              `Error fetching user restrictions for ${universeId}/${userId}`,
+            );
+
             const elapsedTime = (Date.now() - startTime) / 1_000;
             if (
               err instanceof TimeoutError &&
