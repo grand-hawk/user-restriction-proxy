@@ -18,8 +18,8 @@ export const env = createEnv({
     INFISICAL_SERVICE_TOKEN: z.string().optional(),
     INFISICAL_ENVIRONMENT: z.string().optional(),
 
-    AUTHORIZATION_INFISICAL_SECRET_PATH: z.string().optional(),
     AUTHORIZATION: z.string().optional(),
+    AUTHORIZATION_INFISICAL_SECRET_PATH: z.string().optional(),
 
     API_KEY: z.string().optional(),
     API_KEY_INFISICAL_SECRET_PATH: z.string().optional(),
