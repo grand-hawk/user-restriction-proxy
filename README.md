@@ -27,7 +27,7 @@ GET `/user-restrictions/:userId`
 
 ```ts
 // https://create.roblox.com/docs/en-us/cloud/reference/UserRestriction#Get-User-Restriction
-type Response = Record<string, UserRestriction['gameJoinRestriction']>;
+type Response = Record<string, UserRestriction['gameJoinRestriction'] | null>;
 ```
 
 ```json
