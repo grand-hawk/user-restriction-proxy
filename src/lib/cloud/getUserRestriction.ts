@@ -55,7 +55,7 @@ export async function getUserRestriction(universeId: number, userId: number) {
       `https://apis.roblox.com/cloud/v2/universes/${universeId}/user-restrictions/${userId}`,
       {
         headers: {
-          'x-api-key': `${env.API_KEY}`,
+          'x-api-key': `${API_KEY}`,
         },
         retry: 5,
       },
