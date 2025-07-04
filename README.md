@@ -3,6 +3,9 @@
 This is a work in progress project to proxy user restrictions from Roblox to see if a user is banned in a predefined list of universes.
 This uses Redis caching as a request to Roblox's servers can take 200ms+.
 
+> [!NOTE]
+> user-restriction-proxy has been archived in favor of [fetching user restrictions in game](https://devforum.roblox.com/t/beta-use-open-cloud-via-httpservice-without-proxies/3656373)
+
 ### Environment variables
 
 | Variable                              | Description                                                                                         | Default Value              | Required |
